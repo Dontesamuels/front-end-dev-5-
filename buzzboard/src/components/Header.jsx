@@ -1,7 +1,7 @@
 // Header.jsx
 import './Header.css';
 
-function Header({ storeName }) {
+function Header({ storeName, cartCount }) {
   return (
     <header className="header">
       <h1 className="logo">{storeName}</h1>
@@ -12,6 +12,12 @@ function Header({ storeName }) {
         <a href="#" className="nav-link">About</a>
         <a href="#" className="nav-link">Contact</a>
       </nav>
+
+      {/* Cart Icon + Count */}
+      <div className="cart-container">
+        <span className="cart-icon">🛒</span>
+        <span className="cart-count">{cartCount}</span>
+      </div>
     </header>
   );
 }
