@@ -1,104 +1,101 @@
-import './App.css';
-import { useState } from 'react';
-import Hero from './components/Hero';
-import Header from './components/Header';
-import ProductCard from './components/ProductCard';
-import Footer from './components/Footer';
-import CartItem from './components/CartItem';
-function App() {
+import { useState, useEffect } from "react";
+import { Routes, Route } from "react-router-dom";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
-  //  Product Data Array
+// Pages
+import Homepage from "./pages/Homepage";
+import ProductsPage from "./pages/ProductsPage";
+import ProductDetailsPage from "./pages/ProductDetailsPage";
+import CartPage from "./pages/CartPage";
+
+function App() {
   const products = [
     {
       id: 1,
       name: "🍎 MacBook Air",
-      price: 899.50,
-      image: "https://placehold.co/600x400",
-      description: "One of the newer MacBook Airs for a low price!"
+      price: 899.5,
+      image: "https://techtoschool.com/cdn/shop/files/MRXV3LLA_1728x.jpg?v=1728685922",
+      description: "One of the newer MacBook Airs for a low price!",
     },
     {
       id: 2,
       name: "Skullcandy Headphones 🎧",
       price: 50,
-      image: "https://placehold.co/600x400",
-      description: "Banging headphones with powerful bass!"
+      image: "https://www.skullcandy.com/cdn/shop/files/crusher_anc_2_buy_box_1_preppy-summer_2.png?v=1752695170",
+      description: "Banging headphones with powerful bass!",
     },
     {
       id: 3,
       name: "Pringles 🥔",
       price: 20000,
-      image: "https://placehold.co/600x400",
-      description: "One of God's greatest gifts on Earth."
-    }
+      image: "https://www.kroger.com/product/images/xlarge/front/0003800018371",
+      description: "One of God's greatest gifts on Earth.",
+    },
   ];
 
-  // Cart State
-  const [cart, setCart] = useState([]);
+  // Load cart from localStorage
+  const [cart, setCart] = useState(() => {
+    const savedCart = localStorage.getItem("cart");
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
 
-  // Add to Cart Function
+  // Save cart to localStorage
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
+
   function addToCart(product) {
     setCart([...cart, product]);
   }
 
-  // Remove from Cart Function
   function removeFromCart(id) {
     setCart(cart.filter(item => item.id !== id));
   }
 
-  // Cart Total
-  const total = cart.reduce((sum, item) => sum + item.price, 0);
-
   return (
     <div className="app">
-
-      {/*  Header gets cart count */}
       <Header storeName="Dono-Mart 👾" cartCount={cart.length} />
 
-      <Hero
-        title="Welcome to Dono-Mart"
-        subtitle="Your one stop for major tech and snacks!"
-        ctaText="Come shop now!"
-      />
+      <Routes>
+        <Route path="/" element={<Homepage />} />
 
-      <main className="main-content">
-
-        {/* Render products dynamically */}
-        {products.map(product => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            onAddToCart={addToCart}
-          />
-        ))}
-
-        {/* art Section */}
-        <section className="cart-section">
-          <h2>Your Cart 🛒</h2>
-
-          {cart.length === 0 ? (
-            <p>Your cart is empty</p>
-          ) : (
-            cart.map(item => (
-              <CartItem
-                key={item.id}
-                item={item}
-                onRemove={removeFromCart}
-              />
-            ))
-          )}
-
-          {cart.length > 0 && (
-            <h3>Total: ${total.toFixed(2)}</h3>
-          )}
-        </section>
-
-        <Footer
-          storeName="Dono-Mart 👾"
-          email="support@donomart.com"
-          year={2026}
+        <Route
+          path="/products"
+          element={
+            <ProductsPage
+              products={products}
+              addToCart={addToCart}
+            />
+          }
         />
 
-      </main>
+        <Route
+          path="/product/:id"
+          element={
+            <ProductDetailsPage
+              products={products}
+              addToCart={addToCart}
+            />
+          }
+        />
+
+        <Route
+          path="/cart"
+          element={
+            <CartPage
+              cart={cart}
+              removeFromCart={removeFromCart}
+            />
+          }
+        />
+      </Routes>
+
+      <Footer
+        storeName="Dono-Mart 👾"
+        email="support@donomart.com"
+        year={2026}
+      />
     </div>
   );
 }
