@@ -13,25 +13,23 @@ const mockProduct = {
 
 const mockAddToCart = vi.fn();
 
-describe ("Productcard", () => {
-    render(<ProductCard product={{mockProduct}} onAddToCart={{mockAddToCart}}/>);
+describe("ProductCard", () => {
+  test("renders product info correctly", () => {
+    render(<ProductCard product={mockProduct} onAddToCart={mockAddToCart} />);
 
-    // checks to see if the product name appears
-    expect (screen.getByText("test headphones ")).toBeInTheDocument();
-    // checks for product price 
-    expect (screen.getByText("293.33")).toBeInTheDocument();
-    // checks if the add to cart buttion exist 
-    expect(screen.getByRole("button",{name:/add to cart/i})).toBeInTheDocument();
+    expect(screen.getByText("Test headphones")).toBeInTheDocument();
+    expect(screen.getByText("293.33")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /add to cart/i })
+    ).toBeInTheDocument();
+  });
 
-    test("calls onAddToCart when button is clicked", () => {
+  test("calls onAddToCart when button is clicked", () => {
     render(<ProductCard product={mockProduct} onAddToCart={mockAddToCart} />);
 
     const button = screen.getByRole("button", { name: /add to cart/i });
-
     fireEvent.click(button);
 
     expect(mockAddToCart).toHaveBeenCalledWith(mockProduct);
   });
-
 });
-
